@@ -5,4 +5,6 @@ import 'package:wallet/fragments/income_dashboard.dart';
 class PageRoutes {
  static const String incomes = IncomeDashboard.routeName;
  static const String expenses = ExpenseDashboard.routeName; 
+ static const String login = ExpenseDashboard.routeName; 
+
 }

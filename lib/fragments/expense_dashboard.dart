@@ -5,8 +5,9 @@ import 'package:wallet/Models/Users.dart';
 import 'package:wallet/default_background.dart';
 import 'package:wallet/fragments/transaction_form.dart';
 import 'package:wallet/fragments/transaction_list.dart';
+import 'package:wallet/models/UserData.dart';
+import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/dashboard/NavigationDrawer.dart';
-import 'package:wallet/services/database.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/menu_button.dart';
@@ -16,13 +17,13 @@ class ExpenseDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void showTransactionPanel() {
+    void showTransactionPanel(String uid) {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
-              child: TransactionForm(),
+              child: TransactionForm(uid: uid, title: "Ajouter une dépense"),
             );
           });
     }
@@ -30,13 +31,18 @@ class ExpenseDashboard extends StatelessWidget {
     final user = Provider.of<User>(context);
 
     return StreamBuilder<User>(
-        stream: DatabaseService(uid: user.uid).user,
+        stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<UserTransaction> transactions =
-                snapshot.data.accounts[0].transactions..where((transaction) =>
-                                    transaction.transactionType == 'dépenses')
-                                .toList();
+            User userData = snapshot.data;
+            print("userData.accounts");
+
+            print(userData.accounts);
+            List<UserTransaction> transactions = userData
+                .accounts[0].transactions
+                .where(
+                    (transaction) => transaction.transactionType == "dépense")
+                .toList();
             return new Scaffold(
                 appBar: AppBar(
                   backgroundColor: Colors.red,
@@ -81,7 +87,9 @@ class ExpenseDashboard extends StatelessWidget {
                     color: Colors.white,
                   ),
                   color: Colors.red,
-                  onPressed: showTransactionPanel,
+                  onPressed: () {
+                    showTransactionPanel(user.uid);
+                  },
                 ));
           } else {
             return Loading();

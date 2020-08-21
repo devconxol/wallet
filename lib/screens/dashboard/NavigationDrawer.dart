@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/profile/user_profile.dart';
-import 'package:wallet/services/database.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/page_routes.dart';
@@ -18,11 +18,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
     final user = Provider.of<User>(context);
 
     return StreamBuilder<User>(
-        stream: DatabaseService(uid: user.uid).user,
+        stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             User userData = snapshot.data;
-
             return Drawer(
               child: ListView(
                 children: [
@@ -51,11 +50,20 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     ),
                     trailing: Text(
                         amountsFromUserData(userData.accounts[0].transactions
-                                .where((transaction) =>
-                                    transaction.transactionType == 'dépense')
-                                .toList())
-                            .reduce((a, b) => a + b)
-                            .toString(),
+                                    .where((transaction) =>
+                                        transaction.transactionType ==
+                                        'dépense')
+                                    .toList())
+                                .isNotEmpty
+                            ? amountsFromUserData(userData
+                                    .accounts[0].transactions
+                                    .where((transaction) =>
+                                        transaction.transactionType ==
+                                        'dépense')
+                                    .toList())
+                                .reduce((a, b) => a + b)
+                                .toString()
+                            : "0",
                         style: TextStyle(color: Colors.red)),
                     onTap: () {
                       Navigator.pushReplacementNamed(
@@ -73,11 +81,20 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                     ),
                     trailing: Text(
                         amountsFromUserData(userData.accounts[0].transactions
-                                .where((transaction) =>
-                                    transaction.transactionType == 'recette')
-                                .toList())
-                            .reduce((a, b) => a + b)
-                            .toString(),
+                                    .where((transaction) =>
+                                        transaction.transactionType ==
+                                        "recette")
+                                    .toList())
+                                .isNotEmpty
+                            ? amountsFromUserData(userData
+                                    .accounts[0].transactions
+                                    .where((transaction) =>
+                                        transaction.transactionType ==
+                                        "recette")
+                                    .toList())
+                                .reduce((a, b) => a + b)
+                                .toString()
+                            : "0",
                         style: TextStyle(color: Colors.green)),
                     onTap: () {
                       Navigator.pushReplacementNamed(

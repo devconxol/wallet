@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wallet/default_background.dart';
-import 'package:wallet/services/auth.dart';
+import 'package:wallet/models/services/auth.dart'; 
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 

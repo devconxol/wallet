@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallet/services/database.dart';
+import 'package:wallet/models/services/database.dart'; 
 import 'package:wallet/shared/constants.dart';
 
 class BankForm extends StatefulWidget {

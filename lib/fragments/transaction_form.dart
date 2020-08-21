@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:wallet/services/database.dart';
+import 'package:provider/provider.dart';
+import 'package:wallet/models/Users.dart';
+import 'package:wallet/models/services/database.dart';
 import 'package:wallet/shared/constants.dart';
+import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
+  final String title;
+  final String uid;
+
+  TransactionForm({this.uid, this.title});
+
   @override
   _TransactionFormState createState() => _TransactionFormState();
 }
@@ -14,10 +22,8 @@ class _TransactionFormState extends State<TransactionForm> {
   DateTime _date;
   final _dateController = TextEditingController();
   String date;
-  String bank;
-  String operationType; // depot ou credit
+  String category; //
   double amount;
-  String operationPartner;
   _printLatestValue() {
     print("Second text field: ${_dateController.text}");
   }
@@ -40,13 +46,13 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseService database = DatabaseService();
+    DatabaseService database = DatabaseService(uid: widget.uid);
     return Form(
       key: _formKey,
       child: Wrap(
         children: <Widget>[
           Text(
-            "Ajouter une recette",
+            widget.title,
             style: TextStyle(fontSize: 18.0),
           ),
           SizedBox(height: 20.0),
@@ -55,8 +61,9 @@ class _TransactionFormState extends State<TransactionForm> {
             decoration: textInputDecoration.copyWith(hintText: 'Date'),
             validator: (value) => value.isEmpty ? 'Please enter a date' : null,
             onChanged: (value) {
-              _dateController.text = value;
-              setState(() => date = value);
+              setState(() {
+                date = value;
+              });
             },
           ),
           SizedBox(height: 20.0),
@@ -68,20 +75,18 @@ class _TransactionFormState extends State<TransactionForm> {
                         firstDate: DateTime(2001),
                         lastDate: DateTime(2222))
                     .then((value) {
-                  _dateController.text = value.toIso8601String();
+                  _dateController.text = DateFormat('dd-MM-yyyy').format(value);
                   _date = value;
                 });
               },
               icon: Icon(Icons.timer),
-              label: _date == null
-                  ? Text('Choisir une date')
-                  : Text(_date.toIso8601String())),
+              label: Text('Choisir une date')),
           SizedBox(height: 20.0),
           TextFormField(
             decoration: textInputDecoration.copyWith(hintText: 'Category'),
             validator: (value) => value.isEmpty ? 'Please enter a bank' : null,
             onChanged: (value) {
-              setState(() => operationPartner = value);
+              setState(() => category = value);
             },
           ),
           SizedBox(height: 20.0),
@@ -101,10 +106,10 @@ class _TransactionFormState extends State<TransactionForm> {
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () async {
-              print('date');
-              print(_dateController.text);
-              // database.addTransaction(
-              //     date, bank, operationType, operationPartner, amount);
+              print(date);
+              print(category);
+              print(amount);
+              database.addUserTransaction(date, category, "dépense", amount);
             },
           )
         ],

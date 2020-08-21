@@ -1,11 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wallet/default_background.dart';
-import 'package:wallet/services/auth.dart';
-import 'package:wallet/shared/constants.dart';
+import 'package:wallet/screens/authenticate/register_business_form.dart';
+import 'package:wallet/screens/authenticate/register_personal_form.dart';
+ import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 
 class Register extends StatefulWidget {
+  static const String routeName = '/registerPage';
+
   final Function toggleView;
   Register({this.toggleView});
 
@@ -14,20 +17,13 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  final AuthService _auth = AuthService();
-  final _formKey = GlobalKey<FormState>();
-
-  String name = '';
-  String email = '';
-  String password = '';
-  String error = '';
-  bool loading = false;
+ 
+  int group = 1; 
+  bool isPersonel = true;
 
   @override
   Widget build(BuildContext context) {
-    return loading
-        ? Loading()
-        : Scaffold(
+    return   Scaffold(
             backgroundColor: Colors.amber[100],
             appBar: AppBar(
               backgroundColor: Colors.amber[400],
@@ -44,75 +40,42 @@ class _RegisterState extends State<Register> {
             body: CustomPaint(
               painter: DefaultBackground(),
               child: Container(
-                padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-                child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        TextFormField(
-                          decoration: textInputDecoration.copyWith(
-                              hintText: "Nom & Prénoms"),
-                          validator: (value) =>
-                              value.isEmpty ? 'Veillez entrez votre nom' : null,
-                          onChanged: (value) {
-                            setState(() => name = value);
-                          },
-                        ),
-                        SizedBox(height: 20.0),
-                        TextFormField(
-                          decoration:
-                              textInputDecoration.copyWith(hintText: "Email"),
-                          validator: (value) =>
-                              value.isEmpty ? 'Entrer un email' : null,
-                          onChanged: (value) {
-                            setState(() => email = value);
-                          },
-                        ),
-                        SizedBox(height: 20.0),
-                        TextFormField(
-                          decoration: textInputDecoration.copyWith(
-                              hintText: "Mot de passe"),
-                          validator: (value) => value.length < 6
-                              ? 'Au moins 6 characters pour le mot de passe'
-                              : null,
-                          obscureText: true,
-                          onChanged: (value) {
-                            setState(() => password = value);
-                          },
-                        ),
-                        SizedBox(height: 20.0),
-                        RaisedButton(
-                            color: Colors.orange[400],
-                            child: Text(
-                              "S'enrégister",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState.validate()) {
-                                setState(() => loading = true);
-
-                                dynamic result =
-                                    await _auth.registerWithEmailAndPassword(
-                                        email, password, name);
-
-                                if (result == null) {
-                                  setState(() {
-                                    error =
-                                        'Vous êtes déjà enrégistré avec cet email';
-                                    loading = false;
-                                  });
-                                }
-                              }
-                            }),
-                        SizedBox(height: 12.0),
-                        Text(
-                          error,
-                          style: TextStyle(color: Colors.red, fontSize: 14.0),
-                        )
-                      ],
-                    )),
-              ),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+                  child: Column(
+                    children: <Widget>[
+                      Column(
+                        children: [
+                          RadioListTile(
+                              title: const Text('Personel'),
+                              value: 1,
+                              groupValue: group,
+                              onChanged: (value) {
+                                print(value);
+                                setState(() {
+                                  group = value;
+                                  isPersonel = !isPersonel;
+                                });
+                              }),
+                          RadioListTile(
+                              title: const Text('Entreprise'),
+                              value: 2,
+                              groupValue: group,
+                              onChanged: (value) {
+                                print(value);
+                                setState(() {
+                                  group = value;
+                                  isPersonel = !isPersonel;
+                                });
+                              })
+                        ],
+                      ),
+                      isPersonel
+                      ? 
+                      RegisterPersonalForm() : 
+                      RegisterBusinessForm()
+                    ],
+                  )),
             ));
   }
-}
+} 

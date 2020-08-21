@@ -1,239 +1,220 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/Models/Users.dart';
 import 'package:wallet/fragments/expense_dashboard.dart';
 import 'package:wallet/fragments/income_dashboard.dart';
+import 'package:wallet/models/UserData.dart';
+import 'package:wallet/models/services/auth.dart';
+import 'package:wallet/models/services/database.dart';
+import 'package:wallet/screens/authenticate/authenticate.dart';
+import 'package:wallet/screens/authenticate/register.dart';
 import 'package:wallet/screens/wrapper.dart';
-import 'package:wallet/services/auth.dart';
 import 'package:wallet/shared/page_routes.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(WalletApp());
 }
 
-class MyApp extends StatelessWidget {
+class WalletApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>.value(
-      value: AuthService().user,
-      child: MaterialApp(
-        home: Wrapper(),
-        routes:  {
-          PageRoutes.expenses: (context) => ExpenseDashboard(),
-          PageRoutes.incomes: (context) => IncomeDashboard(),
-        },
+    return StreamProvider<User>(
+      create: (BuildContext context) => AuthService().user(),
+      child: MaterialApp(home: Wrapper()),
+    );
+  }
+}
+
+/*
+
+
+
+
+*/
+/*
+class MyAppp extends StatefulWidget {
+  @override
+  _MyApppState createState() => _MyApppState();
+}
+
+class _MyApppState extends State<MyAppp> {
+  StreamSubscription<User> authenticationStreamSubscription;
+  Stream<UserData> userDataStream;
+
+  StreamSubscription<User> setLoggedInUserStream() {
+    authenticationStreamSubscription =
+        AuthService().user().listen((firebaseUser) {
+      print('listening');
+      userDataStream = DatabaseService(uid: firebaseUser?.uid).userData();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    authenticationStreamSubscription = setLoggedInUserStream();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    authenticationStreamSubscription.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamProvider<UserData>.value(
+        value: userDataStream,
+        child: MaterialApp(
+            // Provide a function to handle named routes. Use this function to
+            // identify the named route being pushed, and create the correct
+            // Screen.
+            onGenerateRoute: (settings) {
+              // If you push the PassArguments route
+              if (settings.name == PassArgumentsScreen.routeName) {
+                // Cast the arguments to the correct type: ScreenArguments.
+                final ScreenArguments args = settings.arguments;
+
+                // Then, extract the required data from the arguments and
+                // pass the data to the correct screen.
+                return MaterialPageRoute(
+                  builder: (context) {
+                    return PassArgumentsScreen(
+                      title: args.title,
+                      message: args.message,
+                    );
+                  },
+                );
+              }
+              // The code only supports PassArgumentsScreen.routeName right now.
+              // Other values need to be implemented if we add them. The assertion
+              // here will help remind us of that higher up in the call stack, since
+              // this assertion would otherwise fire somewhere in the framework.
+              assert(false, 'Need to implement ${settings.name}');
+              return null;
+            },
+            title: 'Navigation with Arguments',
+            home: Wrapper(),
+            routes: {
+              ExtractArgumentsScreen.routeName: (context) =>
+                  ExtractArgumentsScreen(),
+            }));
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Home Screen'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // A button that navigates to a named route that. The named route
+            // extracts the arguments by itself.
+            RaisedButton(
+              child: Text("Navigate to screen that extracts arguments"),
+              onPressed: () {
+                // When the user taps the button, navigate to a named route
+                // and provide the arguments as an optional parameter.
+                Navigator.pushNamed(
+                  context,
+                  ExtractArgumentsScreen.routeName,
+                  arguments: ScreenArguments(
+                    'Extract Arguments Screen',
+                    'This message is extracted in the build method.',
+                  ),
+                );
+              },
+            ),
+            // A button that navigates to a named route. For this route, extract
+            // the arguments in the onGenerateRoute function and pass them
+            // to the screen.
+            RaisedButton(
+              child: Text("Navigate to a named that accepts arguments"),
+              onPressed: () {
+                // When the user taps the button, navigate to a named route
+                // and provide the arguments as an optional parameter.
+                Navigator.pushNamed(
+                  context,
+                  PassArgumentsScreen.routeName,
+                  arguments: ScreenArguments(
+                    'Accept Arguments Screen',
+                    'This message is extracted in the onGenerateRoute function.',
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-// void main() => runApp(MyApp());
+// A Widget that extracts the necessary arguments from the ModalRoute.
+class ExtractArgumentsScreen extends StatelessWidget {
+  static const routeName = '/extractArguments';
 
-// class MyApp extends StatelessWidget {
-//   // This widget is the root of your application.
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner:false,
-//       title: 'login',
-//       theme: ThemeData(
-//         primarySwatch:Colors.lightBlue,
-//       ),
-//       home: SignInPage(),
-//     );
-//   }
+  @override
+  Widget build(BuildContext context) {
+    // Extract the arguments from the current ModalRoute settings and cast
+    // them as ScreenArguments.
+    final ScreenArguments args = ModalRoute.of(context).settings.arguments;
 
-// }
-// class SignInPage extends StatefulWidget{
-//   @override
-//   _SignInPageState createState()=>_SignInPageState();
-// }
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(args.title),
+      ),
+      body: Center(
+        child: Text(args.message),
+      ),
+    );
+  }
+}
 
-// class _SignInPageState  extends State <SignInPage> {
-//   MediaQueryData queryData;
-//   static const Color orangec = Color(0xffFEAC46);
+// A Widget that accepts the necessary arguments via the constructor.
+class PassArgumentsScreen extends StatelessWidget {
+  static const routeName = '/passArguments';
 
-//   @override
-//     Widget build(BuildContext context) {
-//       queryData=MediaQuery.of(context);
-//       return Scaffold(
+  final String title;
+  final String message;
 
-//       body: SingleChildScrollView(
-//         child: CustomPaint(
-//           painter: SignInPainter(),
-//             child:Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//             children: <Widget>[
-//               SizedBox(height: queryData.size.width*0.15),
+  // This Widget accepts the arguments as constructor parameters. It does not
+  // extract the arguments from the ModalRoute.
+  //
+  // The arguments are extracted by the onGenerateRoute function provided to the
+  // MaterialApp widget.
+  const PassArgumentsScreen({
+    Key key,
+    @required this.title,
+    @required this.message,
+  }) : super(key: key);
 
-//               SizedBox(height: queryData.size.width*0.08),
-//               Text('          Welcome ',
-//                 style: TextStyle(
-//                   fontSize: queryData.size.width*0.12,
-//                   fontWeight: FontWeight.bold,
-//                   color: Colors.white,
-//                 ),
-//               ),
-//               Row(
-//                 children: <Widget>[
-//                   SizedBox(height: queryData.size.width*0.05),
-//                   Text(
-//                     '          Back',
-//                     style: TextStyle(
-//                       fontSize: queryData.size.width*0.12,
-//                       fontWeight: FontWeight.bold,
-//                       color: Colors.white,
-//                     ),
-//                   )
-//                 ],
-//               ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+      ),
+      body: Center(
+        child: Text(message),
+      ),
+    );
+  }
+}
 
-//               Padding(
-//                 padding: EdgeInsets.all(queryData.size.width*0.07),
-//                 child: Form(
-//                   child: Column(
-//                     children: <Widget>[
-//                       SizedBox(height: queryData.size.width*0.6),
-//                       TextFormField(
-//                         decoration: InputDecoration(
-//                           labelText: 'Email',
-//                           hintText: 'Email',
-//                           labelStyle: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: queryData.size.width*0.05
-//                           ),
-//                         ),
-//                       ),
-//                   SizedBox(height: queryData.size.width*0.03),
-//                   TextFormField(
-//                     obscureText:true,
-//                   decoration: InputDecoration(
-//                   labelText: 'Password',
-//                   hintText: 'Password',
-//                   labelStyle: TextStyle(
-//                     fontWeight: FontWeight.bold,
-//                     fontSize: queryData.size.width*0.05,
-//                   ),
-//                 ),
-//               ),
-//                      SizedBox(height: queryData.size.width*0.1),
-//                      Row(
-//                         mainAxisAlignment:MainAxisAlignment.spaceBetween,
-//                         children: <Widget>[
-//                           Text(
-//                             'Sign In',
-//                                 style: TextStyle(
-//                                   fontSize: queryData.size.width*0.08,
-//                                   fontWeight: FontWeight.bold,
+// You can pass any object to the arguments parameter. In this example,
+// create a class that contains both a customizable title and message.
+class ScreenArguments {
+  final String title;
+  final String message;
 
-//                                 ),
-
-//                           ),
-//                                      ClipOval(
-//                                     child: Material (
-//                                       color:Colors.orange,
-//                                       child: InkWell(
-//                                         child: Padding(
-//                                           padding: EdgeInsets.all(
-//                                               queryData.size.width*0.015
-//                                           ),
-//                                            child: IconButton(
-
-//                                               color: Colors.black,
-//                                              icon: Icon(Icons.arrow_forward,),
-//                                               onPressed: () {
-
-//                                                 Navigator.of(context).push(
-//                                                   MaterialPageRoute(builder:(_)=> Home())
-//                                                 );
-//                                               }),
-//                                   ),
-//                               ),
-//                                     ),
-//                                      ),
-//             ],
-//             ),
-//                       SizedBox(height: queryData.size.width*0.1),
-//                       Row(
-//                         mainAxisAlignment:MainAxisAlignment.spaceBetween,
-//                         children: <Widget>[
-//                           InkWell(
-//                             onTap: (){
-//                               print('you tapped on signUp inkwell');
-//                               Navigator.of(context).push(
-//                                 MaterialPageRoute(
-//                                   builder: (_)=>SignUpPage(),
-//                                 ),
-//                               );
-//                             },
-//                             child: Text('Sign Up',
-//                               style: TextStyle(
-//                                 fontSize: queryData.size.width*0.05,
-//                                 decoration: TextDecoration.underline,
-//                               ),
-//                             ),
-//                           ),
-//                 InkWell(
-//                     onTap: (){
-//                       print('you tapped on forgot password inkwell');
-
-//                     },
-//                     child: Text('Forgot password?',
-//                       style: TextStyle(
-//                         fontSize: queryData.size.width*0.05,
-//                         decoration: TextDecoration.underline,
-//                       ),
-//                     ),
-//                 ),
-//                 ],
-//                     ),
-//                     ],
-//                   ),
-//                 ),
-//               ),
-//             ],
-
-//           ),
-//         ),
-//     ),
-
-// );
-
-//   }
-
-// }
-
-// class SignInPainter  extends CustomPainter{
-//   @override
-//   void paint(Canvas canvas,Size size){
-//     const Color orangec = Color(0xffFEAC46);
-//     const Color greyc = Color(0xff494F58);
-//     const Color bluec = Color(0xff59C0E6  );
-//   var paint= Paint();
-//     paint.color=bluec;
-
-//     Offset c1=Offset (size.width*1.0,size.width*0.1);
-//     double radius1 = size.width*1.5;
-
-//     canvas.drawCircle(c1, radius1, paint);
-
-//     paint.color=greyc;
-
-//     Offset c2=Offset (size.width*1.0,size.width*0.05);
-//     double radius2 = size.width*1.0;
-
-//     canvas.drawCircle(c2, radius2, paint);
-
-//     paint.color=orangec;
-
-//     Offset c3=Offset (size.width*0.05,size.width*0.00);
-//     double radius3 = size.width*0.95;
-
-//     canvas.drawCircle(c3, radius3 , paint);
-//   }
-//    @override
-//   bool shouldRepaint(SignInPainter oldDelegate )=>false;
-//   @override
-//   bool shouldRebuildSemantics(SignInPainter oldDelegate)=>false;
-
-//   }
+  ScreenArguments(this.title, this.message);
+}
+*/

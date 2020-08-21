@@ -14,9 +14,13 @@ const textInputDecoration = InputDecoration(
 
 List<int> amountsFromUserData(List<UserTransaction> userTransactions) {
     List<int> amounts = new List<int>();
+
     userTransactions.forEach((transaction) {
       amounts.add(transaction.amount);
     });
+
+     
+
     return amounts;
   }
 

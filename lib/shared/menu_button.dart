@@ -7,7 +7,7 @@ class MenuButton extends StatelessWidget {
   final double height;
   final double width;
   final Icon icon;
-  final VoidCallback onPressed;
+  final Function onPressed;
 
   MenuButton(
       {this.color,

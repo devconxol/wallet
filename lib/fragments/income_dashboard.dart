@@ -5,9 +5,9 @@ import 'package:wallet/Models/Users.dart';
 import 'package:wallet/default_background.dart';
 import 'package:wallet/fragments/transaction_form.dart';
 import 'package:wallet/fragments/transaction_list.dart';
+import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/bank/bank_form.dart';
 import 'package:wallet/screens/dashboard/NavigationDrawer.dart';
-import 'package:wallet/services/database.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/menu_button.dart';
@@ -18,25 +18,31 @@ class IncomeDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
+
     void showTransactionPanel() {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
-              child: TransactionForm(),
+              child: TransactionForm(
+                title: "Ajouter une recette",
+              ),
             );
           });
     }
 
     return StreamBuilder<User>(
-        stream: DatabaseService(uid: user.uid).user,
+        stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            List<UserTransaction> transactions =
-                snapshot.data.accounts[0].transactions..where((transaction) =>
-                                    transaction.transactionType == 'recette')
-                                .toList();
+            User userData = snapshot.data;
+            List<UserTransaction> transactions = userData
+                .accounts[0].transactions
+                .where(
+                    (transaction) => transaction.transactionType == "recette")
+                .toList();
+
             return new Scaffold(
                 appBar: AppBar(
                   backgroundColor: Colors.green,
