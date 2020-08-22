@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallet/Models/Account.dart';
+import 'package:wallet/models/Account.dart';
 
 class UserData {
   final String uid;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/UserTransaction.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/UserData.dart';
+import 'package:wallet/models/UserTransaction.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/default_background.dart';
 import 'package:wallet/fragments/transaction_form.dart';
 import 'package:wallet/fragments/transaction_list.dart';
@@ -17,7 +18,7 @@ class IncomeDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserData>(context);
 
     void showTransactionPanel() {
       showModalBottomSheet(
@@ -32,11 +33,11 @@ class IncomeDashboard extends StatelessWidget {
           });
     }
 
-    return StreamBuilder<User>(
+    return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            User userData = snapshot.data;
+            UserData userData = snapshot.data;
             List<UserTransaction> transactions = userData
                 .accounts[0].transactions
                 .where(

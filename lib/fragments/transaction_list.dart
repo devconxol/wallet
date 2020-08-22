@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/UserTransaction.dart';
-import 'package:wallet/Models/Users.dart';
-import 'package:wallet/fragments/transaction_tile.dart'; 
+import 'package:wallet/models/UserTransaction.dart';
+import 'package:wallet/models/Users.dart';
+import 'package:wallet/fragments/transaction_tile.dart';
 import 'package:wallet/shared/loading.dart';
 
 class TransactionList extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/UserTransaction.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/UserTransaction.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/default_background.dart';
 import 'package:wallet/fragments/transaction_form.dart';
 import 'package:wallet/fragments/transaction_list.dart';
@@ -17,27 +17,28 @@ class ExpenseDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void showTransactionPanel(String uid) {
+    void showTransactionPanel(String uid, transactions) {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
-              child: TransactionForm(uid: uid, title: "Ajouter une dépense"),
+              child: TransactionForm(
+                  uid: uid,
+                  title: "Ajouter une dépense",
+                  transactions: transactions),
             );
           });
     }
 
-    final user = Provider.of<User>(context);
-
-    return StreamBuilder<User>(
+    final user = Provider.of<UserData>(context);
+   
+    return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            User userData = snapshot.data;
-            print("userData.accounts");
+            UserData userData = snapshot.data;
 
-            print(userData.accounts);
             List<UserTransaction> transactions = userData
                 .accounts[0].transactions
                 .where(
@@ -88,7 +89,8 @@ class ExpenseDashboard extends StatelessWidget {
                   ),
                   color: Colors.red,
                   onPressed: () {
-                    showTransactionPanel(user.uid);
+                    showTransactionPanel(
+                        user.uid, userData.accounts[0].transactions);
                   },
                 ));
           } else {

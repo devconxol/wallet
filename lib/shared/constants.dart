@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wallet/Models/UserTransaction.dart';
+import 'package:wallet/models/UserTransaction.dart';
 import 'package:wallet/fragments/transaction_form.dart';
 
 const textInputDecoration = InputDecoration(
@@ -13,15 +13,11 @@ const textInputDecoration = InputDecoration(
 );
 
 List<int> amountsFromUserData(List<UserTransaction> userTransactions) {
-    List<int> amounts = new List<int>();
+  List<int> amounts = new List<int>();
 
-    userTransactions.forEach((transaction) {
-      amounts.add(transaction.amount);
-    });
+  userTransactions.forEach((transaction) {
+    amounts.add(transaction.amount);
+  });
 
-     
-
-    return amounts;
-  }
-
-
+  return amounts;
+}

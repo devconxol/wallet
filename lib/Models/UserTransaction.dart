@@ -11,5 +11,13 @@ class UserTransaction {
 
 
 
+  Map toJson() => {
+    'date': date,
+    'transactionType': transactionType,
+    'category': category,
+    'amount': amount,
+
+  }; 
+
 
 }

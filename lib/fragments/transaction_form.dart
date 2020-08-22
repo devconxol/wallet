@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:wallet/models/Account.dart';
+import 'package:wallet/models/UserData.dart';
+import 'package:wallet/models/UserTransaction.dart';
 import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/services/database.dart';
 import 'package:wallet/shared/constants.dart';
@@ -9,8 +12,9 @@ import 'package:intl/intl.dart';
 class TransactionForm extends StatefulWidget {
   final String title;
   final String uid;
+  final List<UserTransaction> transactions;
 
-  TransactionForm({this.uid, this.title});
+  TransactionForm({this.uid, this.title, this.transactions});
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -23,7 +27,7 @@ class _TransactionFormState extends State<TransactionForm> {
   final _dateController = TextEditingController();
   String date;
   String category; //
-  double amount;
+  int amount;
   _printLatestValue() {
     print("Second text field: ${_dateController.text}");
   }
@@ -77,6 +81,7 @@ class _TransactionFormState extends State<TransactionForm> {
                     .then((value) {
                   _dateController.text = DateFormat('dd-MM-yyyy').format(value);
                   _date = value;
+                  date = value.toIso8601String();
                 });
               },
               icon: Icon(Icons.timer),
@@ -95,7 +100,7 @@ class _TransactionFormState extends State<TransactionForm> {
             decoration: textInputDecoration.copyWith(hintText: 'Montant'),
             validator: (value) => value.isEmpty ? 'Please enter a bank' : null,
             onChanged: (value) {
-              setState(() => amount = double.parse(value));
+              setState(() => amount = int.parse(value));
             },
           ),
           SizedBox(height: 20.0),
@@ -109,7 +114,14 @@ class _TransactionFormState extends State<TransactionForm> {
               print(date);
               print(category);
               print(amount);
-              database.addUserTransaction(date, category, "dépense", amount);
+
+              widget.transactions.add(UserTransaction(
+                  date: date,
+                  transactionType: "dépense",
+                  amount: amount,
+                  category: category));
+
+              database.addUserTransaction(widget.transactions);
             },
           )
         ],

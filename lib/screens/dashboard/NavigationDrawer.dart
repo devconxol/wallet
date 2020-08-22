@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/UserData.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/profile/user_profile.dart';
 import 'package:wallet/shared/constants.dart';
@@ -15,13 +16,13 @@ class NavigationDrawer extends StatefulWidget {
 class _NavigationDrawerState extends State<NavigationDrawer> {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
+    final user = Provider.of<UserData>(context);
 
-    return StreamBuilder<User>(
+    return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            User userData = snapshot.data;
+            UserData userData = snapshot.data;
             return Drawer(
               child: ListView(
                 children: [
@@ -38,6 +39,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                         style: TextStyle(fontSize: 40.0),
                       ),
                     ),
+                  ),
+                  ListTile(
+                    title: Text(userData.accounts[0].name),
                   ),
                   ListTile(
                     leading: Icon(

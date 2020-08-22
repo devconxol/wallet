@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/fragments/expense_dashboard.dart';
 import 'package:wallet/fragments/income_dashboard.dart';
 import 'package:wallet/models/UserData.dart';
@@ -13,8 +13,8 @@ import 'package:wallet/shared/page_routes.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<User>(context);
-    
+    final user = Provider.of<UserData>(context);
+
     if (user == null) {
       return Authenticate();
     } else {

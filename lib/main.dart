@@ -1,8 +1,9 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/fragments/expense_dashboard.dart';
 import 'package:wallet/fragments/income_dashboard.dart';
 import 'package:wallet/models/UserData.dart';
@@ -11,6 +12,7 @@ import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/authenticate/authenticate.dart';
 import 'package:wallet/screens/authenticate/register.dart';
 import 'package:wallet/screens/wrapper.dart';
+import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/page_routes.dart';
 
 void main() {
@@ -20,9 +22,22 @@ void main() {
 class WalletApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<User>(
-      create: (BuildContext context) => AuthService().user(),
-      child: MaterialApp(home: Wrapper()),
+    return FutureBuilder(
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return MaterialApp(home: Text("Une erreur s'est produite"));
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          return StreamProvider<UserData>(
+            create: (BuildContext context) => AuthService().user(),
+            child: MaterialApp(home: Wrapper()),
+          );
+        }
+
+        return MaterialApp(home: Loading());
+      },
     );
   }
 }

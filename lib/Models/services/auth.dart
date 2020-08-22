@@ -1,17 +1,16 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:wallet/Models/Users.dart';
-import 'package:wallet/models/UserData.dart';
-import 'package:wallet/models/services/database.dart';
+ import 'package:wallet/models/UserData.dart';
+ import 'package:wallet/models/services/database.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User _userFromFirebaseUser(FirebaseUser user) {
-    return user != null ? User(uid: user.uid) : null;
+  UserData _userFromFirebaseUser( user) {
+    return user != null ? UserData(uid: user.uid) : null;
   }
 
-  Stream<User> user() {
-    return _auth.onAuthStateChanged.map(_userFromFirebaseUser);
+  Stream<UserData> user() {
+    return _auth.authStateChanges().map(_userFromFirebaseUser);
   }
 
   Future registerWithEmailAndPassword(
@@ -20,10 +19,10 @@ class AuthService {
       String accountType = 'personal';
 
       //Créer un nouvel utilisateur
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      FirebaseUser user = result.user;
+      User user = userCredential.user;
 
       // Sauvegarder les données de l'utlisateur dans la base de donnée
       await DatabaseService(uid: user.uid)
@@ -41,10 +40,10 @@ class AuthService {
     try {
       String accountType = 'business';
 
-      AuthResult result = await _auth.createUserWithEmailAndPassword(
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      FirebaseUser user = result.user;
+      User user = userCredential.user;
 
       await DatabaseService(uid: user.uid)
           .updateUserData(name, email, accountType);
@@ -58,10 +57,10 @@ class AuthService {
 
   Future signInWithEmailAndPassword(String email, String password) async {
     try {
-      AuthResult result = await _auth.signInWithEmailAndPassword(
+      UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      FirebaseUser user = result.user;
+      User user = userCredential.user;
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());

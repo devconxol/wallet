@@ -1,8 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:slugify/slugify.dart';
-import 'package:wallet/Models/Account.dart';
-import 'package:wallet/Models/UserTransaction.dart';
-import 'package:wallet/Models/Users.dart';
+import 'package:wallet/models/Account.dart';
+import 'package:wallet/models/UserTransaction.dart';
+import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/UserData.dart';
 
 class DatabaseService {
@@ -20,7 +22,6 @@ class DatabaseService {
       Firestore.instance.collection("transations");
 
   List<UserTransaction> _transactionsFromSnapshot(List transactions) {
-    print('transactions');
     List<UserTransaction> newTransactions = new List<UserTransaction>();
     transactions.forEach((account) {
       newTransactions.add(UserTransaction(
@@ -29,6 +30,7 @@ class DatabaseService {
           category: account['category'],
           transactionType: account['transactionType']));
     });
+
     return newTransactions;
   }
 
@@ -37,8 +39,6 @@ class DatabaseService {
     List<Account> newAccounts = new List<Account>();
 
     accounts.forEach((account) {
-      print("account");
-
       newAccounts.add(Account(
           name: account["name"],
           solde: account['solde'],
@@ -48,18 +48,13 @@ class DatabaseService {
     return newAccounts;
   }
 
-  User userFromSnapshot(DocumentSnapshot snapshot) {
-    print("snapshot.data");
-    print(snapshot.data);
-
-    User user = User(
+  UserData userFromSnapshot(DocumentSnapshot snapshot) {
+    UserData user = UserData(
       uid: uid,
-      name: snapshot.data['name'],
-      email: snapshot.data['email'],
-      accounts: _accountsFromSnapshot(snapshot.data['accounts']),
+      name: snapshot.data()['name'],
+      email: snapshot.data()['email'],
+      accounts: _accountsFromSnapshot(snapshot.data()['accounts']),
     );
-    print('user.name');
-    print(user.name);
 
     return user;
   }
@@ -91,22 +86,32 @@ class DatabaseService {
     });
   }
 
-  Future addUserTransaction(
-      String date, String category, String operationType, double amount) async {
-    return await userCollection.document(uid).setData({
-      'accounts.transactionss': [
-        {
-          "amount": amount,
-          "date": date,
-          "category": category,
-          "operationType": operationType
-        }
-      ]
+  Future addUserTransaction(List<UserTransaction> transactions) async {
+    //  firebase.firestore.FieldValue.arrayUnion("greater_virginia")
+
+    List<Map<String, Object>> transactionData = new List<Map<String, Object>>();
+
+    transactions.forEach((transaction) {
+      print(transaction.amount);
+      String jsonTransaction = jsonEncode(transaction);
+      print(jsonTransaction);
+      // transactionData.add();
     });
+    transactionData.add({
+      'date': "12-12-2020",
+      'transactionType': "recette",
+      'amount': 50000,
+      'category': "salaire"
+    });
+
+   /* return await userCollection.doc(uid).update({
+      "accounts": FieldValue.arrayUnion([
+        {'name': 'boa', 'solde': 500, }
+      ])
+    });*/
   }
 
-  Stream<User> userData() {
-    print("getting userData");
-    return userCollection.document(uid).snapshots().map(userFromSnapshot);
+  Stream<UserData> userData() {
+    return userCollection.doc(uid).snapshots().map(userFromSnapshot);
   }
 }
