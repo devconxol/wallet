@@ -20,26 +20,28 @@ class IncomeDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context);
 
-    void showTransactionPanel() {
+    void showTransactionPanel(String uid) {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
               child: TransactionForm(
+                btnText: "Enrégistrer",
+
+                uid: uid,
                 title: "Ajouter une recette",
+                transactionType: "recette",
               ),
             );
           });
     }
 
-    return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData(),
+    return StreamBuilder<List<UserTransaction>>(
+        stream: DatabaseService(uid: user.uid).userTransactions(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            UserData userData = snapshot.data;
-            List<UserTransaction> transactions = userData
-                .accounts[0].transactions
+            List<UserTransaction> transactions = snapshot.data
                 .where(
                     (transaction) => transaction.transactionType == "recette")
                 .toList();
@@ -88,7 +90,9 @@ class IncomeDashboard extends StatelessWidget {
                     color: Colors.white,
                   ),
                   color: Colors.green,
-                  onPressed: showTransactionPanel,
+                  onPressed: () {
+                    showTransactionPanel(user.uid);
+                  },
                 ));
           } else {
             return Loading();

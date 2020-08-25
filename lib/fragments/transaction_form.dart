@@ -11,10 +11,28 @@ import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
   final String title;
+
+  final int index;
+  final String date;
+  final String category;
+  final int amount;
+
+  final String btnText;
+
+  final String transactionType;
   final String uid;
   final List<UserTransaction> transactions;
 
-  TransactionForm({this.uid, this.title, this.transactions});
+  TransactionForm(
+      {this.index,
+      this.uid,
+      this.title,
+      this.date,
+      this.category,
+      this.amount,
+      this.btnText,
+      this.transactionType,
+      this.transactions});
 
   @override
   _TransactionFormState createState() => _TransactionFormState();
@@ -46,10 +64,14 @@ class _TransactionFormState extends State<TransactionForm> {
 
     // Start listening to changes.
     _dateController.addListener(_printLatestValue);
+    setState(() {
+      _dateController.text = widget.date ?? ""; 
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    print(widget.date);
     DatabaseService database = DatabaseService(uid: widget.uid);
     return Form(
       key: _formKey,
@@ -88,6 +110,7 @@ class _TransactionFormState extends State<TransactionForm> {
               label: Text('Choisir une date')),
           SizedBox(height: 20.0),
           TextFormField(
+            initialValue: widget.category ?? "",
             decoration: textInputDecoration.copyWith(hintText: 'Category'),
             validator: (value) => value.isEmpty ? 'Please enter a bank' : null,
             onChanged: (value) {
@@ -96,6 +119,7 @@ class _TransactionFormState extends State<TransactionForm> {
           ),
           SizedBox(height: 20.0),
           TextFormField(
+            initialValue: widget.amount.toString() ?? "",
             keyboardType: TextInputType.number,
             decoration: textInputDecoration.copyWith(hintText: 'Montant'),
             validator: (value) => value.isEmpty ? 'Please enter a bank' : null,
@@ -107,21 +131,33 @@ class _TransactionFormState extends State<TransactionForm> {
           RaisedButton(
             color: Colors.pink[400],
             child: Text(
-              'Enrégister',
+              widget.btnText,
               style: TextStyle(color: Colors.white),
             ),
             onPressed: () async {
-              print(date);
-              print(category);
-              print(amount);
+              if (_formKey.currentState.validate()) {
+                if (widget.index != null) {
+                  widget.transactions[widget.index].amount =
+                      amount ?? widget.transactions[widget.index].amount;
+                  widget.transactions[widget.index].date =
+                      date ?? widget.transactions[widget.index].date;
 
-              widget.transactions.add(UserTransaction(
-                  date: date,
-                  transactionType: "dépense",
-                  amount: amount,
-                  category: category));
+                  widget.transactions[widget.index].category =
+                      category ?? widget.transactions[widget.index].category;
+                  print("update transaction");
 
-              database.addUserTransaction(widget.transactions);
+                  print(widget.transactions[widget.index].amount);
+                  await database.updateTransaction(widget.transactions);
+                  Navigator.pop(context);
+                } else {
+                  await database.addUserTransaction(
+                      date: date,
+                      transactionType: widget.transactionType,
+                      category: category,
+                      amount: amount);
+                  Navigator.pop(context);
+                }
+              }
             },
           )
         ],

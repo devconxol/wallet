@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wallet/models/UserData.dart';
 import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/services/database.dart';
+import 'package:wallet/screens/dashboard/soldes.dart';
 import 'package:wallet/screens/profile/user_profile.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
@@ -23,6 +24,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             UserData userData = snapshot.data;
+            print(userData);
             return Drawer(
               child: ListView(
                 children: [
@@ -40,71 +42,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                       ),
                     ),
                   ),
-                  ListTile(
-                    title: Text(userData.accounts[0].name),
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.remove,
-                      color: Colors.red,
-                    ),
-                    title: Text(
-                      "Dépenses",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                    trailing: Text(
-                        amountsFromUserData(userData.accounts[0].transactions
-                                    .where((transaction) =>
-                                        transaction.transactionType ==
-                                        'dépense')
-                                    .toList())
-                                .isNotEmpty
-                            ? amountsFromUserData(userData
-                                    .accounts[0].transactions
-                                    .where((transaction) =>
-                                        transaction.transactionType ==
-                                        'dépense')
-                                    .toList())
-                                .reduce((a, b) => a + b)
-                                .toString()
-                            : "0",
-                        style: TextStyle(color: Colors.red)),
-                    onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, PageRoutes.expenses);
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(
-                      Icons.add,
-                      color: Colors.green,
-                    ),
-                    title: Text(
-                      "Recettes",
-                      style: TextStyle(color: Colors.green),
-                    ),
-                    trailing: Text(
-                        amountsFromUserData(userData.accounts[0].transactions
-                                    .where((transaction) =>
-                                        transaction.transactionType ==
-                                        "recette")
-                                    .toList())
-                                .isNotEmpty
-                            ? amountsFromUserData(userData
-                                    .accounts[0].transactions
-                                    .where((transaction) =>
-                                        transaction.transactionType ==
-                                        "recette")
-                                    .toList())
-                                .reduce((a, b) => a + b)
-                                .toString()
-                            : "0",
-                        style: TextStyle(color: Colors.green)),
-                    onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, PageRoutes.incomes);
-                    },
-                  ),
+                  // ListTile(
+                  //   title: Text(userData.accounts[0].name),
+                  // ),
+                  Soldes(uid: user.uid),
                   Divider(),
                   ListTile(
                     leading: Icon(

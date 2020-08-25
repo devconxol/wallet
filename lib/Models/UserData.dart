@@ -5,9 +5,9 @@ class UserData {
   final String uid;
   final String name;
   final String email;
-  final List<Account> accounts;
+//  final List<Account> accounts;
 
-  UserData({this.uid, this.name, this.email, this.accounts});
+  UserData({this.uid, this.name, this.email });
 
 // User.toJson(Map<String, dynamic> parsedJson):
 // :  uid = parsedJson['uid'],

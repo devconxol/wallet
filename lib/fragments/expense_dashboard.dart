@@ -24,29 +24,28 @@ class ExpenseDashboard extends StatelessWidget {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
               child: TransactionForm(
-                  uid: uid,
-                  title: "Ajouter une dépense",
-                  transactions: transactions),
+                btnText: "Enrégistrer",
+                uid: uid,
+                title: "Ajouter une dépense",
+                transactionType: "dépense",
+              ),
             );
           });
     }
 
     final user = Provider.of<UserData>(context);
-   
-    return StreamBuilder<UserData>(
-        stream: DatabaseService(uid: user.uid).userData(),
+
+    return StreamBuilder<List<UserTransaction>>(
+        stream: DatabaseService(uid: user.uid).userTransactions(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            UserData userData = snapshot.data;
-
-            List<UserTransaction> transactions = userData
-                .accounts[0].transactions
+            List<UserTransaction> transactions = snapshot.data
                 .where(
                     (transaction) => transaction.transactionType == "dépense")
                 .toList();
             return new Scaffold(
                 appBar: AppBar(
-                  backgroundColor: Colors.red,
+                  backgroundColor: Colors.orange,
                   title: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,6 +73,7 @@ class ExpenseDashboard extends StatelessWidget {
                       CustomPaint(
                         painter: DefaultBackground(),
                         child: TransactionList(
+                          uid: user.uid,
                           transactions: transactions,
                         ),
                       ),
@@ -87,10 +87,9 @@ class ExpenseDashboard extends StatelessWidget {
                     Icons.add,
                     color: Colors.white,
                   ),
-                  color: Colors.red,
+                  color: Colors.orange,
                   onPressed: () {
-                    showTransactionPanel(
-                        user.uid, userData.accounts[0].transactions);
+                    showTransactionPanel(user.uid, transactions);
                   },
                 ));
           } else {

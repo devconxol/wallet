@@ -13,12 +13,12 @@ import 'package:wallet/shared/page_routes.dart';
 class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    
     final user = Provider.of<UserData>(context);
 
     if (user == null) {
       return Authenticate();
-    } else {
-      print(user.uid);
+    } else { 
 
       return MaterialApp(
         home: ExpenseDashboard(),
