@@ -20,7 +20,10 @@ class IncomeDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context);
 
-    void showTransactionPanel(String uid) {
+    void showTransactionPanel(String uid, transactions) {
+      print("uid");
+
+      print(uid);
       showModalBottomSheet(
           context: context,
           builder: (context) {
@@ -28,7 +31,7 @@ class IncomeDashboard extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
               child: TransactionForm(
                 btnText: "Enrégistrer",
-
+                transactions: transactions,
                 uid: uid,
                 title: "Ajouter une recette",
                 transactionType: "recette",
@@ -76,6 +79,8 @@ class IncomeDashboard extends StatelessWidget {
                       CustomPaint(
                         painter: DefaultBackground(),
                         child: TransactionList(
+                          uid: user.uid,
+
                           transactions: transactions,
                         ),
                       ),
@@ -91,7 +96,8 @@ class IncomeDashboard extends StatelessWidget {
                   ),
                   color: Colors.green,
                   onPressed: () {
-                    showTransactionPanel(user.uid);
+                    print("income");
+                    showTransactionPanel(user.uid, transactions);
                   },
                 ));
           } else {

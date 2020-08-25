@@ -184,6 +184,8 @@ class DatabaseService {
 
     //print(jsonTransactions);
     Future data = userCollection.doc(uid).get();
+    print('uid');
+    print(uid);
 
     return await userCollection
         .doc(uid)
