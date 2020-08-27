@@ -128,9 +128,7 @@ class _TFormState extends State<TForm> {
                     style: TextStyle(color: Colors.white),
                   ),
                   onPressed: () async {
-                    print('date');
-                    print(_dateController.text);
-                    // database.addTransaction(
+                     // database.addTransaction(
                     //     date, bank, operationType, operationPartner, amount);
                   },
                 )

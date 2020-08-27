@@ -17,9 +17,7 @@ List<int> amountsFromUserData(List<UserTransaction> userTransactions) {
 
   userTransactions.forEach((transaction) {
     amounts.add(transaction.amount);
-  });
-  print("amounts");
-  print(amounts);
+  }); 
 
   return amounts;
 }

@@ -141,8 +141,7 @@ class _MainMenuState extends State<MainMenu>
                 color: Colors.blue[300],
               ),
               onPressed: () {
-                print('Nice');
-                if (animationController.isCompleted) {
+                 if (animationController.isCompleted) {
                   animationController.reverse();
                 } else {
                   animationController.forward();

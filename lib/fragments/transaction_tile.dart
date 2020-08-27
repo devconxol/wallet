@@ -13,8 +13,7 @@ class TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     void showTransactionPanel(
         String uid, String date, String category, int amount) {
-      print(date);
-      showModalBottomSheet(
+       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(

@@ -38,8 +38,9 @@ class ExpenseDashboard extends StatelessWidget {
     return StreamBuilder<List<UserTransaction>>(
         stream: DatabaseService(uid: user.uid).userTransactions(),
         builder: (context, snapshot) {
+  
           if (snapshot.hasData) {
-            List<UserTransaction> transactions = snapshot.data
+             List<UserTransaction> transactions = snapshot.data
                 .where(
                     (transaction) => transaction.transactionType == "dépense")
                 .toList();

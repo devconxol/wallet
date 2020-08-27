@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wallet/models/UserData.dart';
 import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/services/database.dart';
+import 'package:wallet/screens/dashboard/accounts.dart';
 import 'package:wallet/screens/dashboard/soldes.dart';
 import 'package:wallet/screens/profile/user_profile.dart';
 import 'package:wallet/shared/constants.dart';
@@ -45,6 +46,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                   // ListTile(
                   //   title: Text(userData.accounts[0].name),
                   // ),
+                  Accounts(uid: user.uid),
                   Soldes(uid: user.uid),
                   Divider(),
                   ListTile(

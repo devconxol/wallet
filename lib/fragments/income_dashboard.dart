@@ -21,9 +21,7 @@ class IncomeDashboard extends StatelessWidget {
     final user = Provider.of<UserData>(context);
 
     void showTransactionPanel(String uid, transactions) {
-      print("uid");
-
-      print(uid);
+     
       showModalBottomSheet(
           context: context,
           builder: (context) {
@@ -96,8 +94,7 @@ class IncomeDashboard extends StatelessWidget {
                   ),
                   color: Colors.green,
                   onPressed: () {
-                    print("income");
-                    showTransactionPanel(user.uid, transactions);
+                     showTransactionPanel(user.uid, transactions);
                   },
                 ));
           } else {

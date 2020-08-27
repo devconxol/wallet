@@ -71,8 +71,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.date);
-    DatabaseService database = DatabaseService(uid: widget.uid);
+     DatabaseService database = DatabaseService(uid: widget.uid);
     return Form(
       key: _formKey,
       child: Wrap(

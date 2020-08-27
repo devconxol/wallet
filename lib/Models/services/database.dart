@@ -12,13 +12,15 @@ class DatabaseService {
   DatabaseService({this.uid});
 
   final CollectionReference userCollection =
-      Firestore.instance.collection("users");
+      FirebaseFirestore.instance.collection("users");
 
   final CollectionReference bankCollection =
       Firestore.instance.collection("banks");
 
   final CollectionReference transactionCollection =
       Firestore.instance.collection("transations");
+
+   
 
   List<UserTransaction> _transactionsFromSnapshot(dynamic transactions) {
     List<UserTransaction> newTransactions = new List<UserTransaction>();
@@ -35,14 +37,20 @@ class DatabaseService {
 
   List<UserTransaction> _transactionsFromAccountSnapshot(
       DocumentSnapshot account) {
+ 
     List<UserTransaction> newTransactions = new List<UserTransaction>();
+
     account.get("transactions").forEach((account) {
+ 
       newTransactions.add(UserTransaction(
           date: account["date"],
           amount: account['amount'],
           category: account['category'],
           transactionType: account['transactionType']));
     });
+    print("transactions");
+
+
 
     return newTransactions;
   }
@@ -84,16 +92,27 @@ class DatabaseService {
     return account;
   }
 
+  //  Account _userAccountsSnapshot(DocumentSnapshot snapshot) {
+  //   Account account = Account(
+  //     name: snapshot.data()['name'],
+  //     solde: snapshot.data()['solde'],
+  //     transactions:
+  //         _transactionsFromAccountSnapshot(snapshot.data()['accounts']),
+  //   );
+
+  //   return account;
+  // }
+
   Future updateUserData(String name, String email, String accountType) async {
-    return await userCollection.document(uid).setData({
+    await userCollection.doc(uid).set({
       'uid': uid,
       'name': name,
       'email': email,
       'accountType': accountType,
-      'accounts': [
-        {'name': 'cash', 'solde': 0, 'transactions': []}
-      ]
-    });
+    }).then((_) => userCollection
+        .doc(uid)
+        .collection("accounts")
+        .doc("cash").set({"name": "cash", "transactions": []}));
   }
 
   Future updateBank(String name) async {
@@ -184,9 +203,7 @@ class DatabaseService {
 
     //print(jsonTransactions);
     Future data = userCollection.doc(uid).get();
-    print('uid');
-    print(uid);
-
+ 
     return await userCollection
         .doc(uid)
         .collection("accounts")
@@ -198,6 +215,7 @@ class DatabaseService {
     return userCollection.doc(uid).snapshots().map(userFromSnapshot);
   }
 
+
   Stream<Account> userAccount() {
     return userCollection
         .doc(uid)
@@ -207,6 +225,12 @@ class DatabaseService {
         .map(_userAccountSnapshot);
   }
 
+ Stream  userAccounts() {
+    return 
+      FirebaseFirestore.instance.collection("users")
+        .doc(uid)
+        .collection("accounts").snapshots();
+  }
   Stream<List<UserTransaction>> userTransactions() {
     return userCollection
         .doc(uid)
