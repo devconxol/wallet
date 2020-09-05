@@ -1,8 +1,16 @@
+
+import 'dart:io';
+
+import 'package:csv/csv.dart';
+import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:wallet/models/UserData.dart';
 import 'package:wallet/models/Users.dart';
 import 'package:wallet/models/services/database.dart';
+import 'package:wallet/screens/dashboard/Export.dart';
 import 'package:wallet/screens/dashboard/accounts.dart';
 import 'package:wallet/screens/dashboard/acountState.dart';
 import 'package:wallet/screens/dashboard/soldes.dart';
@@ -10,6 +18,7 @@ import 'package:wallet/screens/profile/user_profile.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/page_routes.dart';
+ 
 
 class NavigationDrawer extends StatefulWidget {
   @override
@@ -20,6 +29,10 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserData>(context);
+
+
+
+     
 
     return StreamBuilder<UserData>(
         stream: DatabaseService(uid: user.uid).userData(),
@@ -66,6 +79,9 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                           MaterialPageRoute(builder: (_) => UserProfile()));
                     },
                   ), 
+
+
+                  Export() 
                 ],
               ),
             );
