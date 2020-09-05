@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
   final String title;
+  final String account;
 
   final int index;
   final String date;
@@ -24,7 +25,9 @@ class TransactionForm extends StatefulWidget {
   final List<UserTransaction> transactions;
 
   TransactionForm(
-      {this.index,
+      {
+        this.account,
+        this.index,
       this.uid,
       this.title,
       this.date,
@@ -150,6 +153,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   Navigator.pop(context);
                 } else {
                   await database.addUserTransaction(
+                    account: widget.account,
                       date: date,
                       transactionType: widget.transactionType,
                       category: category,

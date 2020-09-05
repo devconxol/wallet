@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:wallet/models/UserTransaction.dart';
 import 'package:wallet/models/services/database.dart';
+import 'package:wallet/screens/dashboard/acountState.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/page_routes.dart';
 
-class Soldes extends StatefulWidget {
+class Soldes extends StatefulWidget  {
   final String uid;
+  final String account;
 
-  Soldes({this.uid});
+  Soldes({this.uid, this.account});
 
   @override
-  _SoldesState createState() => _SoldesState();
+   _SoldesState createState() =>  _SoldesState();
 }
 
-class _SoldesState extends State<Soldes> {
+class  _SoldesState extends State<Soldes> {
+ 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<UserTransaction>>(
-        stream: DatabaseService(uid: widget.uid).userTransactions(),
+    final account = Provider.of<AccountState>(context);
+  
+    return new StreamBuilder<List<UserTransaction>>(
+
+        stream: DatabaseService(uid: widget.uid).userTransactions(account: account.accountName),
+
         builder: (context, snapshot) {
+
           if (snapshot.hasData) {
             List<UserTransaction> transactions = snapshot.data;
-
             return Column(
               children: [
                 ListTile(

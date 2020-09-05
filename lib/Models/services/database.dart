@@ -131,11 +131,15 @@ class DatabaseService {
   }
 
   Future addUserTransaction(
-      {String date,
+      {
+        String account,
+        String date,
       String transactionType,
       String category,
       int amount,
       int index}) async {
+        print("account");
+        print(account);
     //  firebase.firestore.FieldValue.arrayUnion("greater_virginia")
 
     /*dynamic transactionData = [];
@@ -163,7 +167,7 @@ class DatabaseService {
     return await userCollection
         .doc(uid)
         .collection("accounts")
-        .doc("cash")
+        .doc(account)
         .update({
       "transactions": FieldValue.arrayUnion([
         {
@@ -231,11 +235,14 @@ class DatabaseService {
         .doc(uid)
         .collection("accounts").snapshots();
   }
-  Stream<List<UserTransaction>> userTransactions() {
+  Stream<List<UserTransaction>> userTransactions({String account = "cash"}) {
+    print("userTransactions");
+    print(account);
+    
     return userCollection
         .doc(uid)
         .collection("accounts")
-        .doc("cash")
+        .doc(account)
         .snapshots()
         .map(_transactionsFromAccountSnapshot);
   }

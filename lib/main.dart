@@ -11,6 +11,7 @@ import 'package:wallet/models/services/auth.dart';
 import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/authenticate/authenticate.dart';
 import 'package:wallet/screens/authenticate/register.dart';
+import 'package:wallet/screens/dashboard/acountState.dart';
 import 'package:wallet/screens/wrapper.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/page_routes.dart';
@@ -30,10 +31,26 @@ class WalletApp extends StatelessWidget {
         }
 
         if (snapshot.connectionState == ConnectionState.done) {
-          return StreamProvider<UserData>(
-            create: (BuildContext context) => AuthService().user(),
-            child: MaterialApp(home: Wrapper()),
-          );
+          //  ChangeNotifierProvider<AccountState>(
+          //         create: (context) => AccountState(),
+          //         child: NavigationDrawer()),
+          return 
+          MultiProvider(
+  providers: [
+   
+    ChangeNotifierProvider<AccountState>(create:  (BuildContext context) =>  AccountState()),
+    StreamProvider<UserData>(create:  (BuildContext context) => AuthService().user()),
+
+  ],
+  child:  MaterialApp(home: Wrapper()),
+);
+          
+          
+          
+           
+          
+
+
         }
 
         return MaterialApp(home: Loading());

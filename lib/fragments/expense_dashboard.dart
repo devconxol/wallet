@@ -8,6 +8,7 @@ import 'package:wallet/fragments/transaction_list.dart';
 import 'package:wallet/models/UserData.dart';
 import 'package:wallet/models/services/database.dart';
 import 'package:wallet/screens/dashboard/NavigationDrawer.dart';
+import 'package:wallet/screens/dashboard/acountState.dart';
 import 'package:wallet/shared/constants.dart';
 import 'package:wallet/shared/loading.dart';
 import 'package:wallet/shared/menu_button.dart';
@@ -17,13 +18,14 @@ class ExpenseDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void showTransactionPanel(String uid, transactions) {
+    void showTransactionPanel(String uid, transactions, String account) {
       showModalBottomSheet(
           context: context,
           builder: (context) {
             return Container(
               padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
               child: TransactionForm(
+                account: account ,
                 btnText: "Enrégistrer",
                 uid: uid,
                 title: "Ajouter une dépense",
@@ -33,10 +35,14 @@ class ExpenseDashboard extends StatelessWidget {
           });
     }
 
+    
     final user = Provider.of<UserData>(context);
-
-    return StreamBuilder<List<UserTransaction>>(
-        stream: DatabaseService(uid: user.uid).userTransactions(),
+    final account = Provider.of<AccountState>(context);
+    
+ 
+    return 
+    StreamBuilder<List<UserTransaction>>(
+        stream: DatabaseService(uid: user.uid).userTransactions(account: account.accountName),
         builder: (context, snapshot) {
   
           if (snapshot.hasData) {
@@ -66,7 +72,8 @@ class ExpenseDashboard extends StatelessWidget {
                     ],
                   ),
                 ),
-                drawer: NavigationDrawer(),
+                drawer:  NavigationDrawer(),
+                
                 body: Container(
                   //  height: queryData.size.height,
                   child: Stack(
@@ -90,7 +97,7 @@ class ExpenseDashboard extends StatelessWidget {
                   ),
                   color: Colors.orange,
                   onPressed: () {
-                    showTransactionPanel(user.uid, transactions);
+                    showTransactionPanel(user.uid, transactions, account.accountName);
                   },
                 ));
           } else {
