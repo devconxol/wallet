@@ -13,35 +13,69 @@ class UserProfile extends StatelessWidget {
     AuthService _auth = AuthService();
     final user = Provider.of<UserData>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Profile"),
-      ),
-      body: Center(
-          child: Column(
-        children: <Widget>[
-          Text(""),
-          RaisedButton(
-              child: Text('Se déconnecter'),
-              onPressed: () async {
-                await _auth.signOut();
-              }),
-          RaisedButton(
-              child: Text('Ajouter un nouveau compte'),
-              onPressed: () async {
-                  showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return   Container(
-              padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
-              child: BankForm(uid: user.uid),
-            ) 
-            ;
-          });
+    return StreamBuilder<UserData>(
+      stream: DatabaseService(uid: user.uid).userData(),
+      builder: (context, snapshot) {
+        if(snapshot.hasData){
+          UserData userData = snapshot.data;
+          return Scaffold(
+          appBar: AppBar(
+            title: Text("Profile"),
+          ),
+          body: ListView(
+              children:  <Widget>[
+            SizedBox(height: 20),
 
-               }),
-        ],
-      )),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    height: 110,
+                    width: 110,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      image: DecorationImage(image: NetworkImage("https://images.unsplash.com/photo-1599119205399-a005669171bb?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2134&q=80"), fit: BoxFit.cover)
+                    )
+                  ),
+                  Text(userData.name, style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text(userData.email)
+                ]
+              ),
+            ),
+             
+              RaisedButton(
+                color: Colors.greenAccent,
+                  child: Text('Ajouter un nouveau compte', style: TextStyle(),),
+                  onPressed: () async {
+                      showModalBottomSheet(
+              context: context,
+              builder: (context) {
+                return   Container(
+                  padding: EdgeInsets.symmetric(vertical: 30.0, horizontal: 60.0),
+                  child: BankForm(uid: user.uid),
+                ) 
+                ;
+              });
+
+                   }),
+                  Divider(),
+
+
+
+                    RaisedButton(
+                color: Colors.redAccent,
+
+                  child: Text('Se déconnecter', style: TextStyle(color: Colors.white),  ),
+                  onPressed: () async {
+                    await _auth.signOut();
+                  }),
+            ],
+          ));
+        } else {
+          return Loading();
+        }
+        
+      }
     );
   }
 }

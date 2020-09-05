@@ -63,7 +63,7 @@ class ExpenseDashboard extends StatelessWidget {
                       Visibility(
                         visible: true,
                         child: Text(
-                          'Tous les comptes / 1 Août 2020 - 30 Août 2020',
+                          account.accountName,
                           style: TextStyle(
                             fontSize: 12.0,
                           ),
