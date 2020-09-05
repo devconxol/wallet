@@ -3,6 +3,10 @@ import 'package:wallet/models/services/database.dart';
 import 'package:wallet/shared/constants.dart';
 
 class BankForm extends StatefulWidget {
+  final String uid;
+
+  BankForm({this.uid});
+
   @override
   _BankFormState createState() => _BankFormState();
 }
@@ -14,18 +18,17 @@ class _BankFormState extends State<BankForm> {
 
   @override
   Widget build(BuildContext context) {
-    DatabaseService database = DatabaseService();
-    return Form(
+     return  Form(
         key: _formKey,
         child: Column(
           children: <Widget>[
             Text(
-              "Ajouter une nouvelle banque",
+              "Ajouter un nouveau compte",
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 20.0),
             TextFormField(
-              decoration: textInputDecoration.copyWith(hintText: 'Name'),
+              decoration: textInputDecoration.copyWith(hintText: 'Nom du compte'),
               validator: (value) =>
                   value.isEmpty ? 'Please enter a name' : null,
               onChanged: (value) {
@@ -40,7 +43,11 @@ class _BankFormState extends State<BankForm> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () async {
-                database.updateBank(name);
+                await DatabaseService(uid: widget.uid).addAccount(name);
+
+                  Navigator.pop(context);
+ 
+
               },
             )
           ],

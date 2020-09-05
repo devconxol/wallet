@@ -48,8 +48,7 @@ class DatabaseService {
           category: account['category'],
           transactionType: account['transactionType']));
     });
-    print("transactions");
-
+ 
 
 
     return newTransactions;
@@ -114,6 +113,16 @@ class DatabaseService {
         .collection("accounts")
         .doc("cash").set({"name": "cash", "transactions": []}));
   }
+  Future addAccount(String accountName) async {
+    print('addAccount');
+    print(accountName);
+
+
+    return await userCollection
+        .doc(uid)
+        .collection("accounts")
+        .doc(accountName).set({"name": accountName, "transactions": []});
+  }
 
   Future updateBank(String name) async {
     return await bankCollection.document(Slugify(name)).setData({'name': name});
@@ -129,6 +138,8 @@ class DatabaseService {
       'operationPartner': operationPartner
     });
   }
+
+
 
   Future addUserTransaction(
       {

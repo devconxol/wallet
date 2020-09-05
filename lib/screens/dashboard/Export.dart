@@ -82,7 +82,8 @@ class _ExportState extends State<Export> {
                         title: Text("Export"),
                         onTap: () async{ 
                          await _generateCSV(context, transactions, account.accountName);
-                        Scaffold.of(context).showSnackBar(SnackBar(content: Text('Votre portefeuile ${account.accountName} a été exporté avec succès')));
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(content: Text('Votre portefeuile ${account.accountName} a été exporté avec succès')));
                         },
                       );
 
